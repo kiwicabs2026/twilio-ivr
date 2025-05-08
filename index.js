@@ -1,5 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const { google } = require('googleapis');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -10,7 +12,7 @@ app.post('/new-booking', async (req, res) => {
   console.log('Received booking:', booking);
 
   const auth = new google.auth.GoogleAuth({
-    credentials: require('./credentials.json'),
+    credentials: require(process.env.GOOGLE_APPLICATION_CREDENTIALS),
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
   });
 
