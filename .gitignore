@@ -1,4 +1,10 @@
-.env
-*.json
-node_modules/
-/secrets/
+project-root/
+│
+├── .env
+├── .gitignore
+├── index.js
+├── package.json
+├── package-lock.json
+├── /node_modules
+└── /secrets
+
