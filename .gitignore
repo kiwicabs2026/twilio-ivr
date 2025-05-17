@@ -1,25 +1,21 @@
-# Node.js dependencies
+# Node modules (never commit these!)
 node_modules/
 
-# Environment variables (keep Twilio tokens, API keys, etc. here)
-.env
-
-# Log files
+# Logs
+logs
 *.log
-logs/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Optional: editor/project settings
+# Environment variables file (store secrets here, not in repo)
+.env
+
+# Optional: OS or editor files
 .DS_Store
 .vscode/
 .idea/
 
-# Build artifacts (if used)
+# Optional: build output folders (if any)
 dist/
 build/
-
-
-
-
