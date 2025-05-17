@@ -1,14 +1,3 @@
-{
-  "name": "{{widgets.GetCallerName.SpeechResult}}",
-  "pickup_address": "{{widgets.GetPickupAddress.SpeechResult}}",
-  "pickup_time": "now",
-  "caller_number": "{{contact.channel.address}}"
-}
-
-
-“Thank you. We have your name as {{widgets.GetCallerName.SpeechResult}}, pickup address as {{widgets.GetPickupAddress.SpeechResult}}, If this is correct, please stay on the line.”
-
-
 const express = require('express');
 const app = express();
 
@@ -43,33 +32,4 @@ app.post('/api/book', (req, res) => {
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
-
-
-
-
-
-# Node.js dependencies
-node_modules/
-
-# Environment variables (keep Twilio tokens, API keys, etc. here)
-.env
-
-# Log files
-*.log
-logs/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Optional: editor/project settings
-.DS_Store
-.vscode/
-.idea/
-
-# Build artifacts (if used)
-dist/
-build/
-
-
-
 
