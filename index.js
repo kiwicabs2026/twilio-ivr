@@ -1,81 +1,75 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const fs = require('fs');
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Middleware
-app.use(bodyParser.json());
-
-// Logging middleware (to track all requests)
-app.use((req, res, next) => {
-  console.log(`[${req.method}] ${req.originalUrl}`);
-  next();
-});
-
-// Helper function to log data to Render
-function logToRender(dataType, data) {
-  const logEntry = {
-    timestamp: new Date().toISOString(),
-    type: dataType,
-    ...data,
-  };
-  console.log(JSON.stringify(logEntry)); // Appears in Render logs
+{
+  "name": "{{widgets.GetCallerName.SpeechResult}}",
+  "pickup_address": "{{widgets.GetPickupAddress.SpeechResult}}",
+  "pickup_time": "now",
+  "caller_number": "{{contact.channel.address}}"
 }
 
-// Booking handler
-app.post('/booking', (req, res) => {
-  const { callerName, pickupAddress, pickupTime, callerNumber } = req.body;
 
-  if (!callerName || !pickupAddress || !pickupTime || !callerNumber) {
-    return res.status(400).send({ error: 'Missing booking fields.' });
-  }
+“Thank you. We have your name as {{widgets.GetCallerName.SpeechResult}}, pickup address as {{widgets.GetPickupAddress.SpeechResult}}, If this is correct, please stay on the line.”
 
-  // Log data
-  logToRender('Booking', {
-    callerName,
-    pickupAddress,
-    pickupTime,
-    callerNumber,
-  });
 
-  // Respond back
+const express = require('express');
+const app = express();
+
+// Use port from environment variable, fallback to 3000 for local dev
+const port = process.env.PORT || 3000;
+
+// Middleware to parse JSON bodies
+app.use(express.json());
+
+// Root route - quick check if server is running
+app.get('/', (req, res) => {
+  res.send('Server is running!');
+});
+
+// POST /api/book - receive booking data from Twilio Studio
+app.post('/api/book', (req, res) => {
+  const { name, address, pickup_time, caller_number } = req.body;
+
+  console.log('Booking received:');
+  console.log('Name:', name);
+  console.log('Address:', address);
+  console.log('Pickup time:', pickup_time);
+  console.log('Caller number:', caller_number);
+
+  // TODO: Forward data to TaxiCaller or save to DB here
+
+  // Respond back to Twilio to confirm receipt
   res.status(200).json({ success: true, message: 'Booking received' });
 });
 
-// Cancel handler
-app.post('/cancel', (req, res) => {
-  const { callerNumber } = req.body;
-
-  if (!callerNumber) {
-    return res.status(400).send({ error: 'Missing caller number.' });
-  }
-
-  logToRender('Cancel Booking', { callerNumber });
-
-  return res.status(200).send({ message: 'Booking cancelled.' });
+// Start server
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
 });
 
-// Change time handler
-app.post('/change-time', (req, res) => {
-  const { callerNumber, newPickupTime } = req.body;
 
-  if (!callerNumber || !newPickupTime) {
-    return res.status(400).send({ error: 'Missing fields.' });
-  }
 
-  logToRender('Change Pickup Time', { callerNumber, newPickupTime });
 
-  return res.status(200).send({ message: 'Pickup time updated.' });
-});
 
-// Default route
-app.get('/', (req, res) => {
-  res.send('Taxi IVR API is running.');
-});
+# Node.js dependencies
+node_modules/
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+# Environment variables (keep Twilio tokens, API keys, etc. here)
+.env
+
+# Log files
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Optional: editor/project settings
+.DS_Store
+.vscode/
+.idea/
+
+# Build artifacts (if used)
+dist/
+build/
+
+
+
+
