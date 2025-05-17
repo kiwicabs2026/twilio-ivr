@@ -1,12 +1,32 @@
-{
-  "name": "twilio-taxi-ivr",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2",
-    "body-parser": "^1.20.2"
-  }
-}
+# Node.js dependencies
+node_modules/
+
+# Environment variables (keep secrets safe)
+.env
+.env.*
+
+# Log files
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Build artifacts (if you're using build tools)
+dist/
+build/
+
+# Dependency lock files (choose one based on your package manager)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
