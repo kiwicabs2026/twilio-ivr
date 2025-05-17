@@ -1,55 +1,21 @@
-# Node.js
+# Node modules (never commit these!)
 node_modules/
+
+# Logs
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
 
-# Environment variables
+# Environment variables file (store secrets here, not in repo)
 .env
-.env.local
-.env.*.local
 
-# Logs
-logs/
-*.log
+# Optional: OS or editor files
+.DS_Store
+.vscode/
+.idea/
 
-# Build output
+# Optional: build output folders (if any)
 dist/
 build/
-.next/
-out/
-
-# OS-specific files
-.DS_Store
-Thumbs.db
-
-# IDE/editor settings
-.idea/
-.vscode/
-
-# TypeScript
-*.tsbuildinfo
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Coverage from tests
-coverage/
-
-# Backup and temp files
-*.bak
-*.swp
-*.tmp
-
-# Render files
-render-deploy.log
-render-debug.log
-render.yaml
-
-# Optional: ignore any custom debug/notes files
-*.log
-*.notes
