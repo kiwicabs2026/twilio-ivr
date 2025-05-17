@@ -1,65 +1,74 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const fs = require('fs');
+
 const app = express();
-const port = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3000;
 
-// Middleware to parse JSON bodies
-app.use(express.json());
+// Middleware
+app.use(bodyParser.json());
 
-// Health check route
+// Helper function to log data to a file (or database if preferred)
+function logToRender(dataType, data) {
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    type: dataType,
+    ...data,
+  };
+  console.log(JSON.stringify(logEntry)); // Visible in Render logs
+}
+
+// Routes
+
+// Booking handler
+app.post('/booking', (req, res) => {
+  const { callerName, pickupAddress, pickupTime, callerNumber } = req.body;
+
+  if (!callerName || !pickupAddress || !pickupTime || !callerNumber) {
+    return res.status(400).send({ error: 'Missing booking fields.' });
+  }
+
+  logToRender('Booking', {
+    callerName,
+    pickupAddress,
+    pickupTime,
+    callerNumber,
+  });
+
+  return res.status(200).send({ message: 'Booking received.' });
+});
+
+// Cancel handler
+app.post('/cancel', (req, res) => {
+  const { callerNumber } = req.body;
+
+  if (!callerNumber) {
+    return res.status(400).send({ error: 'Missing caller number.' });
+  }
+
+  logToRender('Cancel Booking', { callerNumber });
+
+  return res.status(200).send({ message: 'Booking cancelled.' });
+});
+
+// Change time handler
+app.post('/change-time', (req, res) => {
+  const { callerNumber, newPickupTime } = req.body;
+
+  if (!callerNumber || !newPickupTime) {
+    return res.status(400).send({ error: 'Missing fields.' });
+  }
+
+  logToRender('Change Pickup Time', { callerNumber, newPickupTime });
+
+  return res.status(200).send({ message: 'Pickup time updated.' });
+});
+
+// Default route
 app.get('/', (req, res) => {
-  res.send('Taxi IVR backend is running.');
+  res.send('Taxi IVR API is running.');
 });
 
-// POST /api/book - receive booking data from Twilio Studio
-app.post('/api/book', (req, res) => {
-  const { name, address, pickup_time, caller_number } = req.body;
-
-  if (!name || !address || !pickup_time || !caller_number) {
-    return res.status(400).json({ success: false, message: 'Missing booking fields' });
-  }
-
-  console.log('✅ Booking received:');
-  console.log('Name:', name);
-  console.log('Address:', address);
-  console.log('Pickup time:', pickup_time);
-  console.log('Caller number:', caller_number);
-
-  // TODO: Forward data to TaxiCaller API or store in database
-
-  res.status(200).json({ success: true, message: 'Booking received' });
-});
-
-// POST /api/cancel - receive cancellation request from Twilio Studio
-app.post('/api/cancel', (req, res) => {
-  const { caller_number } = req.body;
-
-  if (!caller_number) {
-    return res.status(400).json({ success: false, message: 'Missing caller_number' });
-  }
-
-  console.log(`🚫 Cancellation request received for caller: ${caller_number}`);
-
-  // TODO: Cancel booking in TaxiCaller API or remove from DB
-
-  res.status(200).json({ success: true, message: `Booking for ${caller_number} has been canceled.` });
-});
-
-// POST /api/update-time - change pickup time for existing booking
-app.post('/api/update-time', (req, res) => {
-  const { caller_number, new_pickup_time } = req.body;
-
-  if (!caller_number || !new_pickup_time) {
-    return res.status(400).json({ success: false, message: 'Missing caller_number or new_pickup_time' });
-  }
-
-  console.log(`🔁 Update request for ${caller_number}: New pickup time - ${new_pickup_time}`);
-
-  // TODO: Update the booking in your system (e.g., TaxiCaller or database)
-
-  res.status(200).json({ success: true, message: `Pickup time updated for ${caller_number}` });
-});
-
-// Start the server
-app.listen(port, () => {
-  console.log(`🚀 Server listening on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
