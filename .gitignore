@@ -1,21 +1,41 @@
-# Node.js dependencies
+# Node modules
 node_modules/
 
-# Environment variables (keep Twilio tokens, API keys, etc. here)
+# Environment variables
 .env
+.env.*
 
-# Log files
-*.log
+# Logs
 logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Optional: editor/project settings
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# OS-specific
 .DS_Store
+Thumbs.db
+
+# Editor directories and files
 .vscode/
 .idea/
+*.sublime-workspace
+*.sublime-project
 
-# Build artifacts (if used)
+# Build output
 dist/
 build/
+
+# Coverage
+coverage/
+
+# Dependency lock files (if using only one package manager)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
