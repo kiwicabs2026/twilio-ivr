@@ -1,57 +1,77 @@
-require('dotenv').config();
 const express = require('express');
-const { google } = require('googleapis');
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Body parsers
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// NEW BOOKING ROUTE
-app.post('/new-booking', async (req, res) => {
-  const booking = req.body;
-  console.log('Received booking:', booking);
+// Optional: in-memory booking store (just for demo)
+const bookings = {};
 
-  try {
-    const auth = new google.auth.GoogleAuth({
-      keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-
-    const sheets = google.sheets({ version: 'v4', auth: await auth.getClient() });
-
-    const spreadsheetId = '1oig42kp7Kd56dajZ8bsyFrXG9sPJCOHePLZ6WI7SFBQ';
-    const sheetName = 'Sheet1';
-
-    await sheets.spreadsheets.values.append({
-      spreadsheetId,
-      range: `${sheetName}!A:E`,
-      valueInputOption: 'USER_ENTERED',
-      requestBody: {
-        values: [[
-          new Date().toISOString(),
-          booking.name || '',
-          booking.address || '',
-          booking.pickup_time || '',
-          booking.caller || ''
-        ]]
-      }
-    });
-
-    res.send({ status: 'added to sheet' });
-
-  } catch (error) {
-    console.error('Error adding to sheet:', error);
-    res.status(500).send({ error: 'Failed to add booking to sheet' });
-  }
+// Root route
+app.get('/', (req, res) => {
+  res.send('🚖 Twilio IVR backend is live.');
 });
 
-// TWILIO CALLBACK (Call Status Update)
+// ✅ 1. New Booking: POST /twilio-callback
 app.post('/twilio-callback', (req, res) => {
-  console.log('Received Twilio callback:', req.body);
-  res.send({ status: 'Callback received' });
+  const { name, address, caller_number } = req.body;
+
+  if (!name || !address || !caller_number) {
+    console.warn('Missing data in booking request:', req.body);
+    return res.status(400).send('Missing one or more required fields.');
+  }
+
+  // Save or simulate booking
+  bookings[caller_number] = { name, address };
+  console.log(`✅ New booking from ${caller_number}:`, bookings[caller_number]);
+
+  // TODO: Forward to TaxiCaller API here if needed
+
+  res.status(200).send('Booking received.');
 });
 
+// ✅ 2. Cancel Booking: POST /cancel-booking
+app.post('/cancel-booking', (req, res) => {
+  const { caller_number } = req.body;
+
+  if (!caller_number) {
+    return res.status(400).send('Missing caller number.');
+  }
+
+  if (!bookings[caller_number]) {
+    return res.status(404).send('No booking found for this number.');
+  }
+
+  delete bookings[caller_number];
+  console.log(`❌ Booking cancelled for ${caller_number}`);
+
+  res.status(200).send('Booking cancelled.');
+});
+
+// ✅ 3. Connect to Staff: POST /connect-staff
+app.post('/connect-staff', (req, res) => {
+  const { caller_number } = req.body;
+
+  if (!caller_number) {
+    return res.status(400).send('Missing caller number.');
+  }
+
+  console.log(`📞 Connect request from ${caller_number} to staff`);
+
+  // Respond back to Twilio Studio to dial staff
+  const twimlResponse = `
+    <Response>
+      <Dial>+1234567890</Dial> <!-- Replace with your real staff number -->
+    </Response>
+  `;
+
+  res.set('Content-Type', 'text/xml');
+  res.send(twimlResponse.trim());
+});
+
+// Start server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`🚀 Server is running on port ${PORT}`);
 });
