@@ -8,17 +8,21 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(bodyParser.json());
 
-// Helper function to log data to a file (or database if preferred)
+// Logging middleware (to track all requests)
+app.use((req, res, next) => {
+  console.log(`[${req.method}] ${req.originalUrl}`);
+  next();
+});
+
+// Helper function to log data to Render
 function logToRender(dataType, data) {
   const logEntry = {
     timestamp: new Date().toISOString(),
     type: dataType,
     ...data,
   };
-  console.log(JSON.stringify(logEntry)); // Visible in Render logs
+  console.log(JSON.stringify(logEntry)); // Appears in Render logs
 }
-
-// Routes
 
 // Booking handler
 app.post('/booking', (req, res) => {
@@ -28,6 +32,7 @@ app.post('/booking', (req, res) => {
     return res.status(400).send({ error: 'Missing booking fields.' });
   }
 
+  // Log data
   logToRender('Booking', {
     callerName,
     pickupAddress,
@@ -35,7 +40,8 @@ app.post('/booking', (req, res) => {
     callerNumber,
   });
 
-  return res.status(200).send({ message: 'Booking received.' });
+  // Respond back
+  res.status(200).json({ success: true, message: 'Booking received' });
 });
 
 // Cancel handler
@@ -69,6 +75,7 @@ app.get('/', (req, res) => {
   res.send('Taxi IVR API is running.');
 });
 
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
