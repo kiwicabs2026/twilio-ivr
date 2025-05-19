@@ -4,28 +4,21 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// Health check route
+// Health check
 app.get('/', (req, res) => {
   res.send('Twilio IVR backend is running.');
 });
 
-// 🧠 List of known drop-off phrases and full addresses
-const knownPlaces = {
-  'wellington hospital': 'Wellington Hospital, South Rd, London NW8 9LE',
-  'heathrow': 'Heathrow Airport, Longford TW6, UK',
-  'paddington station': 'Paddington Station, Praed St, London W2 1RH'
-};
-
-// 🧼 Function to clean up raw speech input
+// 👉 Clean dropoff address
 function cleanDropoffAddress(rawDropoff) {
   if (!rawDropoff) return '';
 
   let cleaned = rawDropoff.toLowerCase();
 
-  // Remove filler phrases
+  // Remove common filler words and phrases
   const fillerWords = [
-    'uhh', 'hmm', 'maybe', 'i think', 'to',
-    "i'm going to", "i am going to", 'going to', 'just'
+    'uhh', 'hmm', 'maybe', 'i think',
+    "i'm going to", 'i am going to', 'going to', 'to', 'just'
   ];
 
   fillerWords.forEach(word => {
@@ -33,31 +26,39 @@ function cleanDropoffAddress(rawDropoff) {
     cleaned = cleaned.replace(regex, '');
   });
 
-  // Remove extra spaces
+  // Remove punctuation and trim extra spaces
+  cleaned = cleaned.replace(/[^\w\s]/gi, '');
   cleaned = cleaned.replace(/\s+/g, ' ').trim();
 
-  // Capitalize first letter of each word (optional)
+  // Capitalize first letters (optional)
   cleaned = cleaned.replace(/\b\w/g, char => char.toUpperCase());
 
   return cleaned;
 }
 
-// 🔍 Try to match cleaned input to a known place
+// 👉 Match cleaned dropoff to known full address
 function matchKnownPlace(cleaned) {
-  const lowercase = cleaned.toLowerCase();
+  const knownPlaces = {
+    'wellington hospital': 'Wellington Hospital, South Rd, London NW8 9LE',
+    'airport': 'London Heathrow Airport, TW6 1QG, UK',
+    'heathrow': 'Heathrow Airport, Longford TW6, UK',
+    'paddington station': 'Paddington Station, Praed St, London W2 1RH'
+  };
+
+  const lower = cleaned.toLowerCase();
   for (const key in knownPlaces) {
-    if (lowercase.includes(key)) {
+    if (lower.includes(key)) {
       return knownPlaces[key];
     }
   }
+
   return cleaned;
 }
 
-// 📦 Handle booking data
+// 👉 Main booking route
 app.post('/api/book', async (req, res) => {
   const { name, address, pickup_time, caller_number, dropoff } = req.body;
 
-  // Clean and match dropoff
   const cleanedDropoff = cleanDropoffAddress(dropoff);
   const matchedDropoff = matchKnownPlace(cleanedDropoff);
 
@@ -72,8 +73,6 @@ app.post('/api/book', async (req, res) => {
   console.log('Cleaned dropoff address:', cleanedDropoff);
   console.log('Matched dropoff address:', matchedDropoff);
 
-  // ✅ You can now forward this to your dispatch system if needed
-
   res.status(200).json({
     success: true,
     message: 'Booking data received and processed.',
@@ -81,7 +80,7 @@ app.post('/api/book', async (req, res) => {
   });
 });
 
-// 🚀 Start the server
+// Start server
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
