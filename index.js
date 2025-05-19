@@ -1,51 +1,34 @@
-const express = require('express');
-const app = express();
-const port = process.env.PORT || 3000;
-
-app.use(express.json());
-
-app.get('/', (req, res) => {
-  res.send('Twilio IVR backend is running.');
-});
-
-function cleanDropoffAddress(rawDropoff) {
-  if (!rawDropoff) return '';
-
-  // Lowercase for consistent processing
-  let cleaned = rawDropoff.toLowerCase();
-
-  // Remove filler words
-  const fillerWords = ['uhh', 'hmm', 'maybe', 'i think', 'to', 'i\'m going to', 'going to', 'just'];
-  fillerWords.forEach(word => {
-    cleaned = cleaned.replace(word, '');
-  });
-
-  // Capitalize first letters (optional)
-  cleaned = cleaned.replace(/\b\w/g, char => char.toUpperCase());
-
-  // Trim extra spaces
-  cleaned = cleaned.trim();
-
-  return cleaned;
-}
+const bookings = []; // Memory-only list
 
 app.post('/api/book', async (req, res) => {
   const { name, address, pickup_time, caller_number, dropoff } = req.body;
-
   const cleanedDropoff = cleanDropoffAddress(dropoff);
+  const mappedDropoff = knownLocations[cleanedDropoff] || cleanedDropoff;
 
-  console.log('Booking received (raw):', { name, address, pickup_time, dropoff, caller_number });
-  console.log('Cleaned dropoff address:', cleanedDropoff);
+  const bookingData = {
+    name,
+    address,
+    pickup_time,
+    caller_number,
+    dropoff_raw: dropoff,
+    dropoff_cleaned: cleanedDropoff,
+    dropoff_final: mappedDropoff,
+    time_received: new Date().toISOString()
+  };
 
-  // Here you could also store, forward, or validate the cleaned address
+  bookings.push(bookingData); // Store temporarily
+
+  console.log('📞 Booking:', bookingData);
 
   res.status(200).json({
     success: true,
-    message: 'Booking data received and processed.',
-    cleaned_dropoff: cleanedDropoff
+    message: 'Booking processed.',
+    dropoff_cleaned: cleanedDropoff,
+    dropoff_final: mappedDropoff
   });
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+// Add a GET endpoint to see all bookings (for testing)
+app.get('/bookings', (req, res) => {
+  res.json(bookings);
 });
