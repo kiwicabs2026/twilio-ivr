@@ -46,7 +46,6 @@ function matchKnownPlace(cleaned) {
   'cbd': 'Wellington Central Business District, Wellington 6011'
 };
 
-  };
 
   const lower = cleaned.toLowerCase();
   for (const key in knownPlaces) {
