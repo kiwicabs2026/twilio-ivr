@@ -39,10 +39,14 @@ function cleanDropoffAddress(rawDropoff) {
 // 👉 Match cleaned dropoff to known full address
 function matchKnownPlace(cleaned) {
   const knownPlaces = {
-    'wellington hospital': 'Wellington Hospital, South Rd, London NW8 9LE',
-    'airport': 'London Heathrow Airport, TW6 1QG, UK',
-    'heathrow': 'Heathrow Airport, Longford TW6, UK',
-    'paddington station': 'Paddington Station, Praed St, London W2 1RH'
+   const knownPlaces = {
+  'airport': 'Wellington International Airport, Stewart Duff Drive, Rongotai, Wellington 6022',
+  'railway station': 'Wellington Railway Station, Bunny Street, Pipitea, Wellington 6011',
+  'hospital': 'Wellington Regional Hospital, Riddiford Street, Newtown, Wellington 6021',
+  'vic university': 'Victoria University of Wellington, Kelburn Parade, Kelburn, Wellington 6012',
+  'cbd': 'Wellington Central Business District, Wellington 6011'
+};
+
   };
 
   const lower = cleaned.toLowerCase();
