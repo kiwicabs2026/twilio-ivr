@@ -38,7 +38,6 @@ function cleanDropoffAddress(rawDropoff) {
 
 // 👉 Match cleaned dropoff to known full address
 function matchKnownPlace(cleaned) {
-  const knownPlaces = {
    const knownPlaces = {
   'airport': 'Wellington International Airport, Stewart Duff Drive, Rongotai, Wellington 6022',
   'railway station': 'Wellington Railway Station, Bunny Street, Pipitea, Wellington 6011',
