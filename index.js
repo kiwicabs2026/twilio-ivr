@@ -63,22 +63,24 @@ app.post('/api/book', async (req, res) => {
   const cleanedDropoff = cleanDropoffAddress(dropoff);
   const matchedDropoff = matchKnownPlace(cleanedDropoff);
 
-  // 🟢 Normalize the pickup_date to NZ format
-  const today = new Date();
-  let formattedDate = '';
+ // Normalize the pickup_date to NZ format
+const today = new Date();
+let formattedDate = '';
 
-  if (pickup_date) {
-    const lowerDate = pickup_date.toLowerCase().trim();
-    if (lowerDate === 'today') {
-      formattedDate = today.toLocaleDateString('en-NZ'); // e.g., 21/05/2025
-    } else if (lowerDate === 'tomorrow') {
-      const tomorrow = new Date(today);
-      tomorrow.setDate(today.getDate() + 1);
-      formattedDate = tomorrow.toLocaleDateString('en-NZ');
-    } else {
-      formattedDate = pickup_date; // fallback: use as-is
-    }
+if (pickup_date) {
+  const lowerDate = String(pickup_date).toLowerCase().trim();
+
+  if (lowerDate === 'today') {
+    formattedDate = today.toLocaleDateString('en-NZ');
+  } else if (lowerDate === 'tomorrow') {
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    formattedDate = tomorrow.toLocaleDateString('en-NZ');
+  } else {
+    formattedDate = pickup_date; // Use as-is (e.g., "2nd July")
   }
+}
+
 
   console.log('Booking received (raw):', {
     name,
