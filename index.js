@@ -68,17 +68,15 @@ let formattedDate = '';
 
 if (pickup_date) {
   const lowerDate = String(pickup_date).toLowerCase().trim();
-  if (lowerDate === 'today') {
-    formattedDate = today.toLocaleDateString('en-NZ');
-  } else if (lowerDate === 'tomorrow') {
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-    formattedDate = tomorrow.toLocaleDateString('en-NZ');
-  } else {
-    formattedDate = pickup_date;  // Use as-is
-  }
+if (lowerDate === 'today') {
+  formattedDate = today.toISOString().slice(0, 10).split('-').reverse().join('/');
+} else if (lowerDate === 'tomorrow') {
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  formattedDate = tomorrow.toISOString().slice(0, 10).split('-').reverse().join('/');
+} else {
+  formattedDate = pickup_date; // Use as-is
 }
-
 
  console.log('Booking received (raw):', {
     name,
