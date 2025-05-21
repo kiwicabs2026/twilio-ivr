@@ -15,10 +15,11 @@ function cleanDropoffAddress(rawDropoff) {
 
   let cleaned = rawDropoff.toLowerCase();
 
-  // Remove common filler words and phrases
   const fillerWords = [
     'uhh', 'hmm', 'maybe', 'i think',
-    "i'm going to", 'i am going to', 'going to', 'to', 'just'
+  "i'm going to", 'i am going to', 'going to',
+  "i'm going", 'i am going', 'going',
+  'to', 'just'
   ];
 
   fillerWords.forEach(word => {
@@ -26,11 +27,9 @@ function cleanDropoffAddress(rawDropoff) {
     cleaned = cleaned.replace(regex, '');
   });
 
-  // Remove punctuation and trim extra spaces
   cleaned = cleaned.replace(/[^\w\s]/gi, '');
   cleaned = cleaned.replace(/\s+/g, ' ').trim();
 
-  // Capitalize first letters (optional)
   cleaned = cleaned.replace(/\b\w/g, char => char.toUpperCase());
 
   return cleaned;
