@@ -62,14 +62,12 @@ app.post('/api/book', async (req, res) => {
 
   const cleanedDropoff = cleanDropoffAddress(dropoff);
   const matchedDropoff = matchKnownPlace(cleanedDropoff);
-
- // Normalize the pickup_date to NZ format
+// Normalize the pickup_date to NZ format
 const today = new Date();
 let formattedDate = '';
 
 if (pickup_date) {
   const lowerDate = String(pickup_date).toLowerCase().trim();
-
   if (lowerDate === 'today') {
     formattedDate = today.toLocaleDateString('en-NZ');
   } else if (lowerDate === 'tomorrow') {
@@ -77,7 +75,7 @@ if (pickup_date) {
     tomorrow.setDate(today.getDate() + 1);
     formattedDate = tomorrow.toLocaleDateString('en-NZ');
   } else {
-    formattedDate = pickup_date; // Use as-is (e.g., "2nd July")
+    formattedDate = pickup_date;  // Use as-is
   }
 }
 
