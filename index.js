@@ -100,7 +100,7 @@ if (pickup_date) {
     cleaned_dropoff: matchedDropoff,
     pickup_date: formattedDate
   });
-});
+
 
 });
 
