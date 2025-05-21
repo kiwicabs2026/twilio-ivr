@@ -58,20 +58,36 @@ function matchKnownPlace(cleaned) {
 
 // 👉 Main booking route
 app.post('/api/book', async (req, res) => {
-  const { name, address, pickup_time, pickup_date, caller_number, dropoff } = req.body;
+  let { name, address, pickup_time, pickup_date, caller_number, dropoff } = req.body;
 
   const cleanedDropoff = cleanDropoffAddress(dropoff);
   const matchedDropoff = matchKnownPlace(cleanedDropoff);
 
-  console.log('Booking received (raw):', {
-  name,
-  address,
-  pickup_time,
-  pickup_date,
-  dropoff,
-  caller_number
-});
+  // 🟢 Normalize the pickup_date to NZ format
+  const today = new Date();
+  let formattedDate = '';
 
+  if (pickup_date) {
+    const lowerDate = pickup_date.toLowerCase().trim();
+    if (lowerDate === 'today') {
+      formattedDate = today.toLocaleDateString('en-NZ'); // e.g., 21/05/2025
+    } else if (lowerDate === 'tomorrow') {
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      formattedDate = tomorrow.toLocaleDateString('en-NZ');
+    } else {
+      formattedDate = pickup_date; // fallback: use as-is
+    }
+  }
+
+  console.log('Booking received (raw):', {
+    name,
+    address,
+    pickup_time,
+    pickup_date: formattedDate,
+    dropoff,
+    caller_number
+  });
 
   console.log('Cleaned dropoff address:', cleanedDropoff);
   console.log('Matched dropoff address:', matchedDropoff);
@@ -79,8 +95,11 @@ app.post('/api/book', async (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Booking data received and processed.',
-    cleaned_dropoff: matchedDropoff
+    cleaned_dropoff: matchedDropoff,
+    pickup_date: formattedDate
   });
+});
+
 });
 
 // Start server
