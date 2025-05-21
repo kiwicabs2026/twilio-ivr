@@ -82,7 +82,7 @@ if (pickup_date) {
 }
 
 
-  console.log('Booking received (raw):', {
+ console.log('Booking received (raw):', {
     name,
     address,
     pickup_time,
