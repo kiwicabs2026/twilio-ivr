@@ -58,18 +58,20 @@ function matchKnownPlace(cleaned) {
 
 // 👉 Main booking route
 app.post('/api/book', async (req, res) => {
-  const { name, address, pickup_time, caller_number, dropoff } = req.body;
+  const { name, address, pickup_time, pickup_date, caller_number, dropoff } = req.body;
 
   const cleanedDropoff = cleanDropoffAddress(dropoff);
   const matchedDropoff = matchKnownPlace(cleanedDropoff);
 
   console.log('Booking received (raw):', {
-    name,
-    address,
-    pickup_time,
-    dropoff,
-    caller_number
-  });
+  name,
+  address,
+  pickup_time,
+  pickup_date,
+  dropoff,
+  caller_number
+});
+
 
   console.log('Cleaned dropoff address:', cleanedDropoff);
   console.log('Matched dropoff address:', matchedDropoff);
