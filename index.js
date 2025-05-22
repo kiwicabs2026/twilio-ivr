@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
+const chrono = require('chrono-node');
+
 
 app.use(express.json());
 
@@ -83,11 +85,20 @@ if (pickup_date) {
     }
 }
 
+let formattedTime = pickup_time;
+
+if (pickup_time) {
+  const parsedTime = chrono.parseDate(pickup_time);
+  if (parsedTime) {
+    formattedTime = parsedTime.toTimeString().slice(0, 5); // "08:30"
+  }
+}
+
 
  console.log('Booking received (raw):', {
     name,
     address,
-    pickup_time,
+    pickup_time: formattedTime,
     pickup_date: formattedDate,
     dropoff,
     caller_number
