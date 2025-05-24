@@ -90,9 +90,14 @@ let formattedTime = pickup_time;
 if (pickup_time) {
   const parsedTime = chrono.parseDate(pickup_time);
   if (parsedTime) {
-    formattedTime = parsedTime.toTimeString().slice(0, 5); // "08:30"
+    formattedTime = parsedTime.toLocaleTimeString('en-NZ', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    }); // "7:30 AM"
   }
 }
+
 
 
  console.log('Booking received (raw):', {
