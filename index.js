@@ -93,11 +93,12 @@ if (pickup_time) {
 
   if (lowerTime === 'now' || lowerTime === 'today now') {
     const now = new Date();
-    formattedTime = now.toLocaleTimeString('en-NZ', {
+    formattedTime = new Intl.DateTimeFormat('en-NZ', {
       hour: 'numeric',
       minute: '2-digit',
-      hour12: true
-    });
+      hour12: true,
+      timeZone: 'Pacific/Auckland'
+    }).format(now);
   } else {
     const parsedTime = chrono.parseDate(pickup_time);
     if (parsedTime) {
@@ -109,6 +110,7 @@ if (pickup_time) {
     }
   }
 }
+
 
 
  console.log('Booking received (raw):', {
