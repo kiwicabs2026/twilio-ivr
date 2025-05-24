@@ -85,19 +85,30 @@ if (pickup_date) {
     }
 }
 
+
 let formattedTime = pickup_time;
 
 if (pickup_time) {
-  const parsedTime = chrono.parseDate(pickup_time);
-  if (parsedTime) {
-    formattedTime = parsedTime.toLocaleTimeString('en-NZ', {
+  const lowerTime = pickup_time.toLowerCase().trim();
+
+  if (lowerTime === 'now' || lowerTime === 'today now') {
+    const now = new Date();
+    formattedTime = now.toLocaleTimeString('en-NZ', {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true
-    }); // "7:30 AM"
+    });
+  } else {
+    const parsedTime = chrono.parseDate(pickup_time);
+    if (parsedTime) {
+      formattedTime = parsedTime.toLocaleTimeString('en-NZ', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      });
+    }
   }
 }
-
 
 
  console.log('Booking received (raw):', {
