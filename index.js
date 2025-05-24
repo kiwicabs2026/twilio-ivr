@@ -112,12 +112,12 @@ if (pickup_time) {
   console.log('Cleaned dropoff address:', cleanedDropoff);
   console.log('Matched dropoff address:', matchedDropoff);
 
- res.status(200).json({
+res.status(200).json({
   success: true,
   message: 'Booking data received and processed.',
-  cleaned_dropoff: matchedDropoff,
+  cleaned_dropoff: cleanedDropoff, 
   pickup_date: formattedDate,
-  pickup_time: formattedTime // ← ADD THIS
+  pickup_time: formattedTime       
 });
 
 
